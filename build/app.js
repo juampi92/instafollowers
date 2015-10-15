@@ -777,12 +777,19 @@ var NavbarView = React.createClass({
 module.exports = NavbarView;
 
 },{}],12:[function(require,module,exports){
+//https://instagram.com/oauth/authorize/?response_type=token&redirect_uri=https://juampi92.github.io/instafollowers&client_id=1fb234f05ed1496a9eb35458be5d2c5c
 'use strict';
 
 var TokenView = React.createClass({
   displayName: 'TokenView',
 
+  requestToken: function requestToken() {
+
+    $(this._modal).openModal();
+  },
   render: function render() {
+    var _this = this;
+
     var _class = this.props.error ? 'invalid' : '';
 
     return React.createElement(
@@ -790,12 +797,104 @@ var TokenView = React.createClass({
       { className: 'row' },
       React.createElement(
         'div',
-        { className: 'input-field col s12' },
+        { className: 'modal modal-fixed-footer', ref: function (c) {
+            return _this._modal = c;
+          } },
+        React.createElement(
+          'div',
+          { className: 'modal-content' },
+          React.createElement(
+            'h4',
+            null,
+            'Request Access Token'
+          ),
+          React.createElement(
+            'p',
+            null,
+            'If you don\'t have a token you could get one using the Apigee App'
+          ),
+          React.createElement(
+            'p',
+            null,
+            'Go to ',
+            React.createElement(
+              'a',
+              { href: 'https://instagram.com/oauth/authorize/?response_type=code&redirect_uri=https://apigee.com/oauth_callback/instagram/oauth2CodeCallback&client_id=1fb234f05ed1496a9eb35458be5d2c5c', target: '_blank' },
+              'this link'
+            ),
+            ' and Authorize the access'
+          ),
+          React.createElement(
+            'p',
+            null,
+            'Then you will be redirected to Apigee Instagram Console, so now you need to get the ',
+            React.createElement(
+              'b',
+              null,
+              'access_token'
+            ),
+            '.',
+            React.createElement('br', null),
+            'Click on the orange ',
+            React.createElement(
+              'b',
+              null,
+              'Send'
+            ),
+            ' button on the right, and after it is finished working, you will get a NOT FOUND response.',
+            React.createElement('br', null),
+            'On the left, you should see the Request box with a text that says ../?',
+            React.createElement(
+              'b',
+              null,
+              'access_token'
+            ),
+            '=... Copy the string that\'s after the \'=\', dots included.'
+          ),
+          React.createElement(
+            'p',
+            null,
+            'You should have something like this: 1637702140.1fa209f.fb331aad3541469abd5076de4d876800'
+          ),
+          React.createElement('p', null),
+          React.createElement(
+            'p',
+            null,
+            'If you would like to remove the access, go to ',
+            React.createElement(
+              'a',
+              { href: 'https://instagram.com/accounts/manage_access', target: '_blank' },
+              'instagram.com/accounts/manage_access'
+            )
+          )
+        ),
+        React.createElement(
+          'div',
+          { className: 'modal-footer' },
+          React.createElement(
+            'a',
+            { href: '#!', className: 'modal-action modal-close waves-effect waves-green btn-flat ' },
+            'Close'
+          )
+        )
+      ),
+      React.createElement(
+        'div',
+        { className: 'input-field col s10' },
         React.createElement('input', { id: 'token_field', type: 'text', className: _class, onChange: this.props.onChange }),
         React.createElement(
           'label',
           { className: 'active', htmlFor: 'token_field', 'data-error': 'Invalid token' },
           'Paste your token'
+        )
+      ),
+      React.createElement(
+        'div',
+        { className: 'col s2' },
+        React.createElement(
+          'button',
+          { className: 'btn waves-effect waves-light btn-large', type: 'button', onClick: this.requestToken },
+          'Request'
         )
       ),
       this.props.loading ? React.createElement(
