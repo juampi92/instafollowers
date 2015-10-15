@@ -322,11 +322,11 @@ var AppView = React.createClass({
   InstaFollowers.renderProfiles(InstaFollowers.toUserclass(_.difference(InstaFollowers.followers, InstaFollowers.following)));
 });*/
 
-InstaUsers.search('self').then(function (user) {
+/*InstaUsers.search('self').then(function(user) {
   console.log(user);
-}).fail(function () {
+}).fail(function() {
   console.error('That username does not exist');
-});
+});*/
 
 module.exports = AppView;
 
@@ -367,26 +367,25 @@ var UserCollection = React.createClass({
           )
         ),
         React.createElement(
-          'div',
-          { className: 'input-field col s12' },
-          React.createElement('input', { id: 'filter_field', type: 'text', onChange: this.filter }),
+          'form',
+          { 'class': 'forms forms-inline input-field s12' },
+          React.createElement('input', { type: 'text', 'class': 'input-big width-50', id: 'query', onChange: this.filter }),
           React.createElement(
             'label',
-            { className: 'active', htmlFor: 'filter_field' },
-            'Filter by username'
+            { htmlFor: 'query' },
+            'Filter'
           )
         )
       ),
       collection.map(function (user) {
-        if (!filter || user.username.toLowerCase().includes(filter)) {
-          return React.createElement(
-            'li',
-            { className: 'collection-item avatar', key: user.username },
-            React.createElement(User, { attrs: user })
-          );
-        } else {
+        if (filter && !user.username.toLowerCase().includes(filter)) {
           return null;
         }
+        return React.createElement(
+          'li',
+          { className: 'collection-item avatar', key: user.username },
+          React.createElement(User, { attrs: user })
+        );
       })
     );
   }
@@ -423,9 +422,17 @@ var FollowersContainerView = React.createClass({
   },
   calculate: function calculate() {
     if (this.state.ready) {
-      var A = InstaFollowers.followers,
-          B = InstaFollowers.following,
-          method = this._select.$_select.val() || 'difference';
+      var A,
+          B,
+          method = this._operation.$_select.val() || 'difference';
+
+      if (this._order.$_select.val() === '1') {
+        A = InstaFollowers.followers;
+        B = InstaFollowers.following;
+      } else {
+        A = InstaFollowers.following;
+        B = InstaFollowers.followers;
+      }
 
       this.setState({
         list: InstaFollowers.toUserclass(_[method](A, B))
@@ -436,6 +443,33 @@ var FollowersContainerView = React.createClass({
     this.setState({
       list: null
     });
+  },
+  presets: function presets(event) {
+    var val = event.target.value;
+
+    switch (val) {
+      case "1":
+        // Users that dont follow you back
+        this._order.$_select.val('1').material_select('update');
+        this._operation.$_select.val('difference').material_select('update');
+        break;
+      case "2":
+        // Following and Followers combined
+        this._order.$_select.val('1').material_select('update');
+        this._operation.$_select.val('union').material_select('update');
+        break;
+      case "3":
+        // Users that follow you but you dont follow them
+        this._order.$_select.val('2').material_select('update');
+        this._operation.$_select.val('difference').material_select('update');
+        break;
+      case "4":
+        // Users that you follow and they follow you back
+        this._order.$_select.val('1').material_select('update');
+        this._operation.$_select.val('intersection').material_select('update');
+        break;
+    }
+    this.calculate();
   },
   render: function render() {
     var _this = this;
@@ -450,14 +484,58 @@ var FollowersContainerView = React.createClass({
           'div',
           { className: 'row' },
           React.createElement(
-            'div',
-            null,
-            'Followers'
+            SelectComponent,
+            { className: 'col s12', defaultValue: '0', onChange: this.presets },
+            React.createElement(
+              'option',
+              { value: '0', disabled: true },
+              'Choose a preset'
+            ),
+            React.createElement(
+              'option',
+              { value: '1' },
+              'Users that dont follow you back'
+            ),
+            React.createElement(
+              'option',
+              { value: '2' },
+              'Following and Followers combined'
+            ),
+            React.createElement(
+              'option',
+              { value: '3' },
+              'Users that follow you but you dont follow them'
+            ),
+            React.createElement(
+              'option',
+              { value: '4' },
+              'Users that you follow and they follow you back'
+            )
+          )
+        ),
+        React.createElement(
+          'div',
+          { className: 'row' },
+          React.createElement(
+            SelectComponent,
+            { className: 'col s4', defaultValue: '1', ref: function (c) {
+                return _this._order = c;
+              } },
+            React.createElement(
+              'option',
+              { value: '1' },
+              'Followers - Following'
+            ),
+            React.createElement(
+              'option',
+              { value: '2' },
+              'Following - Followers'
+            )
           ),
           React.createElement(
             SelectComponent,
-            { className: 'col s3', defaultValue: '1', ref: function (c) {
-                return _this._select = c;
+            { className: 'col s4', defaultValue: '1', ref: function (c) {
+                return _this._operation = c;
               } },
             React.createElement(
               'option',
@@ -482,18 +560,17 @@ var FollowersContainerView = React.createClass({
           ),
           React.createElement(
             'div',
-            null,
-            'Following'
-          ),
-          React.createElement(
-            'button',
-            { className: 'btn waves-effect waves-light', type: 'submit', name: 'action', onClick: this.calculate },
-            'Calculate'
-          ),
-          React.createElement(
-            'button',
-            { className: 'btn waves-effect waves-light', type: 'submit', name: 'reset', onClick: this.reset },
-            'Reset'
+            { className: 'row s4' },
+            React.createElement(
+              'button',
+              { className: 'btn waves-effect waves-light btn-large', type: 'submit', name: 'action', onClick: this.calculate },
+              'Calculate'
+            ),
+            React.createElement(
+              'a',
+              { onClick: this.reset, href: '#' },
+              'Reset'
+            )
           )
         ),
         React.createElement(
@@ -598,6 +675,9 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
 var SelectComponent = React.createClass({
   displayName: 'SelectComponent',
 
+  change: function change() {
+    console.log('cacaaa');
+  },
   render: function render() {
     var _this = this;
 
@@ -606,8 +686,9 @@ var SelectComponent = React.createClass({
     var label = _props.label;
     var children = _props.children;
     var ref = _props.ref;
+    var onChange = _props.onChange;
 
-    var props = _objectWithoutProperties(_props, ['className', 'label', 'children', 'ref']);
+    var props = _objectWithoutProperties(_props, ['className', 'label', 'children', 'ref', 'onChange']);
 
     return React.createElement(
       'div',
@@ -628,6 +709,9 @@ var SelectComponent = React.createClass({
   },
   componentDidMount: function componentDidMount() {
     this.$_select.material_select();
+    if (this.props.onChange) {
+      this.$_select.change(this.props.onChange);
+    }
   },
   componentWillUnmount: function componentWillUnmount() {
     this.$_select.material_select('destroy');
@@ -652,9 +736,13 @@ var NavbarView = React.createClass({
           "li",
           null,
           React.createElement(
-            "b",
-            null,
-            this.props.user
+            "a",
+            { href: 'https://instagram.com/' + this.props.user, target: "_blank" },
+            React.createElement(
+              "b",
+              null,
+              this.props.user
+            )
           )
         ),
         React.createElement(
