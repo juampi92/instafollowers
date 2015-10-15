@@ -91,10 +91,10 @@ var AppView = React.createClass({
   InstaFollowers.renderProfiles(InstaFollowers.toUserclass(_.difference(InstaFollowers.followers, InstaFollowers.following)));
 });*/
 
-InstaUsers.search('self').then(function(user) {
+/*InstaUsers.search('self').then(function(user) {
   console.log(user);
 }).fail(function() {
   console.error('That username does not exist');
-});
+});*/
 
 module.exports = AppView;

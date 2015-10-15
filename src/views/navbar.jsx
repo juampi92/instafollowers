@@ -4,7 +4,7 @@ var NavbarView = React.createClass({
     if (this.props.loggedIn) {
       loggedInOptions = (
       <ul id="nav-mobile" className="right hide-on-med-and-down">
-        <li><b>{this.props.user}</b></li>
+        <li><a href={'https://instagram.com/' + this.props.user} target="_blank"><b>{this.props.user}</b></a></li>
         <li><a href="#" onClick={this.props.onLogout}>Log out</a></li>
       </ul>
       );

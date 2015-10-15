@@ -17,19 +17,20 @@ var UserCollection = React.createClass({
       <ul className="collection">
         <li className="collection-header">
           <h4>Total: <b>{collection.length}</b></h4>
-          <div className="input-field col s12">
-            <input id="filter_field" type="text" onChange={this.filter}/>
-            <label className="active" htmlFor="filter_field">Filter by username</label>
-          </div>
+          <form class="forms forms-inline input-field s12">
+            <input type="text" class="input-big width-50" id="query" onChange={this.filter}/>
+            <label htmlFor="query">Filter</label>
+          </form>
         </li>
         {collection.map(function(user) {
-          if (!filter || user.username.toLowerCase().includes(filter)) {
-            return <li className="collection-item avatar" key={user.username}>
-              <User attrs={user}/>
-            </li>;
-          } else {
+          if (filter && !user.username.toLowerCase().includes(filter)) {
             return null;
-          }          
+          }
+          return (
+            <li className="collection-item avatar" key={user.username}>
+              <User attrs={user}/>
+            </li>
+          );
         })}
       </ul>
     )
