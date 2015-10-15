@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+- "0.12"
+env:
+  global:
+  - GH_REF: github.com/juampi92/instafollowers.git
+  - secure: "Dl3ZJ12z9jHQewCKQu79eZTsvca/xSYot35G4+cqa2Sls4swelSVl0Rk9EQ4R9VvgbxYaHIVtTLMCa61BktYl7FsxQdiKllZGC2RIHvyZnMmB1PpQEaQDOFwe6ZBzeuP8yPA0JTuLLDr+dycI12iNo+XY2xDJYX4ot+oTdUXnjpvlFw2WQ5igYH1NkdbAgAnWPcJYIiYJ95u3ox1l+hI1XMWUnYUAatIik+S/0SlCb2r8ZRub6qUhec78Z7ViAubicOxlEURbnkTP2S9g+q+71zVI0okyyEUP7JNk8QVgyx1daBJvAItN/m0Tf95QxG6GU0TKx+bos+HL3rtZ8T8qi9x93Z2ajyfl564/jcMua2tGuyQK+LynfI1ytKzWNm5Km/9bLcfhIKvvlPiyzDJcER1q0aHEQRgGAKiY/+64fdIKXEL/GgoV7hC+DbGzNv3vIAmqNIsRiOkZtXzRajhOUh78ASgfALYB3/S3vaq5YjYxoBW/Hgjlm6mMzIRMmgOdHyDkr0+xJ/+cKPgoHpbrfcjzGpAsgPdaXv5sYo3VfqbG2FqvCU63nX6Hfe3kpHOl6KNjSjdWyMkYH9AnJkKbPcRVtSk6GV1OuNgFOsQ8dvPzwKheb4KAqIGGO863euTwAocy/pvQUD444mMvA0rxI50zhhJq4VPUjyc2zLYFUo="
+before_script:
+  - npm install grunt-cli -g
+script: bash ./deploy.sh
+branches:
+  only:
+    - master  
